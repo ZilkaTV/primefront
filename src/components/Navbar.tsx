@@ -43,6 +43,9 @@ export default function Navbar() {
             {t.nav.clanFinder}
           </NavLink>
           <LanguageSwitcher />
+          <NavLink to="/register" className="btn-ghost !py-2 !px-3.5 text-sm hidden sm:inline-flex">
+            {t.nav.register}
+          </NavLink>
           <a
             href="https://discord.gg/6RcPDA9dPb"
             target="_blank"
@@ -70,6 +73,9 @@ export default function Navbar() {
         ))}
         <NavLink to="/clan-finder" className={({ isActive }) => `nav-link whitespace-nowrap ${isActive ? 'nav-link-active' : ''}`}>
           {t.nav.clanFinder}
+        </NavLink>
+        <NavLink to="/register" className={({ isActive }) => `nav-link whitespace-nowrap ${isActive ? 'nav-link-active' : ''}`}>
+          {t.nav.register}
         </NavLink>
       </nav>
     </header>

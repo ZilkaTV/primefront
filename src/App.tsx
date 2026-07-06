@@ -13,6 +13,7 @@ import NewsDetail from './pages/NewsDetail'
 import Rules from './pages/Rules'
 import About from './pages/About'
 import Admin from './pages/Admin'
+import PlayerRegister from './pages/PlayerRegister'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/register" element={<PlayerRegister />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>
