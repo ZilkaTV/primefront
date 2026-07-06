@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import League from './pages/League'
-import LeagueApply from './pages/LeagueApply'
 import Clans from './pages/Clans'
 import ClanDetail from './pages/ClanDetail'
+import ClanCreate from './pages/ClanCreate'
 import Tournaments from './pages/Tournaments'
 import ClanFinder from './pages/ClanFinder'
 import Maps from './pages/Maps'
@@ -23,8 +23,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/league" element={<League />} />
-        <Route path="/league/apply" element={<LeagueApply />} />
         <Route path="/clans" element={<Clans />} />
+        <Route path="/clans/create" element={<ClanCreate />} />
         <Route path="/clans/:id" element={<ClanDetail />} />
         <Route path="/tournaments" element={<Tournaments />} />
         <Route path="/clan-finder" element={<ClanFinder />} />

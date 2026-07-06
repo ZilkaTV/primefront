@@ -1,21 +1,19 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { clans } from '../data/clans'
+import { fetchClans, type Clan } from '../lib/clans'
 import { SectionHeading, RegionBadge } from '../components/ui'
 import { useLanguage } from '../i18n/LanguageContext'
-
-function standings() {
-  return clans
-    .map((c) => ({
-      ...c,
-      played: c.leagueWins + c.leagueLosses,
-      points: c.leagueWins * 3,
-    }))
-    .sort((a, b) => b.points - a.points)
-}
+import { tagColor } from '../lib/tagColor'
 
 export default function League() {
   const { t } = useLanguage()
-  const rows = standings()
+  const [clans, setClans] = useState<Clan[]>([])
+
+  useEffect(() => {
+    fetchClans().then(setClans)
+  }, [])
+
+  const rows = [...clans].sort((a, b) => b.league_wins * 3 - a.league_wins * 3)
 
   return (
     <div>
@@ -26,7 +24,7 @@ export default function League() {
         <div className="panel px-6 py-12 sm:px-10 text-center bg-grid-fade">
           <h2 className="text-xl font-bold text-white mb-2">{t.league.emptyTitle}</h2>
           <p className="text-slate-400 mb-6 max-w-lg mx-auto">{t.league.emptyBody}</p>
-          <Link to="/league/apply" className="btn-accent">{t.league.applyButton}</Link>
+          <Link to="/clans/create" className="btn-accent">{t.league.applyButton}</Link>
         </div>
       ) : (
         <div className="panel overflow-x-auto">
@@ -48,15 +46,19 @@ export default function League() {
                   <td className="px-5 py-3 text-slate-500 font-bold">{i + 1}</td>
                   <td className="px-5 py-3">
                     <Link to={`/clans/${c.id}`} className="flex items-center gap-2 font-medium text-white hover:text-accent">
-                      <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                      {c.icon_url ? (
+                        <img src={c.icon_url} alt="" className="h-6 w-6 rounded object-cover shrink-0" />
+                      ) : (
+                        <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: tagColor(c.tag) }} />
+                      )}
                       {c.name}
                     </Link>
                   </td>
                   <td className="px-5 py-3"><RegionBadge region={c.region} /></td>
-                  <td className="px-5 py-3 hidden sm:table-cell text-slate-400">{c.played}</td>
-                  <td className="px-5 py-3 text-slate-400">{c.leagueWins}</td>
-                  <td className="px-5 py-3 text-slate-400">{c.leagueLosses}</td>
-                  <td className="px-5 py-3 text-right font-display font-bold text-accent">{c.points}</td>
+                  <td className="px-5 py-3 hidden sm:table-cell text-slate-400">{c.league_wins + c.league_losses}</td>
+                  <td className="px-5 py-3 text-slate-400">{c.league_wins}</td>
+                  <td className="px-5 py-3 text-slate-400">{c.league_losses}</td>
+                  <td className="px-5 py-3 text-right font-display font-bold text-accent">{c.league_wins * 3}</td>
                 </tr>
               ))}
             </tbody>

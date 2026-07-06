@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { clans } from '../data/clans'
+import { fetchClans, type Clan } from '../lib/clans'
+import { tagColor } from '../lib/tagColor'
+import { supabase } from '../lib/supabase'
 import { tournaments } from '../data/tournaments'
 import { maps } from '../data/maps'
 import { SectionHeading, StatCard, RegionBadge, StatusBadge, CategoryBadge, Card } from '../components/ui'
@@ -13,13 +15,10 @@ import type { NewsArticle } from '../data/news'
 const liveTournament = tournaments.find((t) => t.status === 'live')
 const featuredMaps = maps.slice(0, 4)
 
-function topClans() {
-  return [...clans].sort((a, b) => b.leagueWins - a.leagueWins).slice(0, 5)
-}
-
 export default function Home() {
   const { t } = useLanguage()
-  const top = topClans()
+  const [clans, setClans] = useState<Clan[]>([])
+  const [playerCount, setPlayerCount] = useState(0)
   const [latestPatch, setLatestPatch] = useState<OpenFrontRelease | null>(null)
   const [latestNews, setLatestNews] = useState<NewsArticle[]>([])
 
@@ -28,7 +27,14 @@ export default function Home() {
       .then((releases) => setLatestPatch(releases[0] ?? null))
       .catch(() => setLatestPatch(null))
     getCommunityPosts().then((posts) => setLatestNews(posts.slice(0, 2)))
+    fetchClans().then(setClans)
+    supabase
+      .from('players')
+      .select('*', { count: 'exact', head: true })
+      .then(({ count }) => setPlayerCount(count ?? 0))
   }, [])
+
+  const top = [...clans].sort((a, b) => b.league_wins - a.league_wins).slice(0, 5)
 
   return (
     <div className="space-y-16">
@@ -45,7 +51,7 @@ export default function Home() {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-3 max-w-md">
-          <StatCard label={t.home.statPlayers} value="0" sub={t.home.statPlayersSub} />
+          <StatCard label={t.home.statPlayers} value={`${playerCount}`} sub={t.home.statPlayersSub} />
           <StatCard label={t.home.statClans} value={`${clans.length}`} sub={t.home.statClansSub} />
         </div>
       </section>
@@ -81,7 +87,7 @@ export default function Home() {
           {top.length === 0 ? (
             <div className="p-5">
               <p className="text-sm text-slate-400 mb-4">{t.home.division1Empty}</p>
-              <Link to="/league/apply" className="text-sm font-semibold text-accent hover:text-accent-light">{t.league.applyButton} →</Link>
+              <Link to="/clans/create" className="text-sm font-semibold text-accent hover:text-accent-light">{t.league.applyButton} →</Link>
             </div>
           ) : (
             <ul>
@@ -89,12 +95,16 @@ export default function Home() {
                 <li key={c.id} className="flex items-center justify-between px-5 py-3 border-b border-base-700/60 last:border-0">
                   <div className="flex items-center gap-3">
                     <span className="w-4 text-sm font-bold text-slate-500">{i + 1}</span>
-                    <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                    {c.icon_url ? (
+                      <img src={c.icon_url} alt="" className="h-6 w-6 rounded object-cover shrink-0" />
+                    ) : (
+                      <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: tagColor(c.tag) }} />
+                    )}
                     <Link to={`/clans/${c.id}`} className="font-medium text-white hover:text-accent">{c.name}</Link>
                   </div>
                   <div className="flex items-center gap-3">
                     <RegionBadge region={c.region} />
-                    <span className="font-display font-bold text-accent">{c.leagueWins * 3}</span>
+                    <span className="font-display font-bold text-accent">{c.league_wins * 3}</span>
                   </div>
                 </li>
               ))}
