@@ -1,14 +1,25 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getCommunityPostBySlug } from '../lib/newsStore'
 import { CategoryBadge } from '../components/ui'
 import { useLanguage } from '../i18n/LanguageContext'
+import type { NewsArticle } from '../data/news'
 import NotFound from './NotFound'
 
 export default function NewsDetail() {
   const { t } = useLanguage()
   const { slug } = useParams()
-  const article = slug ? getCommunityPostBySlug(slug) : undefined
+  const [article, setArticle] = useState<NewsArticle | undefined | null>(null)
 
+  useEffect(() => {
+    if (!slug) {
+      setArticle(undefined)
+      return
+    }
+    getCommunityPostBySlug(slug).then(setArticle)
+  }, [slug])
+
+  if (article === null) return null
   if (!article) return <NotFound />
 
   return (

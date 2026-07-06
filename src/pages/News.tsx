@@ -4,19 +4,20 @@ import { SectionHeading, CategoryBadge } from '../components/ui'
 import { useLanguage } from '../i18n/LanguageContext'
 import { getCommunityPosts } from '../lib/newsStore'
 import { fetchOpenFrontReleases, type OpenFrontRelease } from '../lib/openfrontReleases'
+import type { NewsArticle } from '../data/news'
 
 export default function News() {
   const { t } = useLanguage()
   const [releases, setReleases] = useState<OpenFrontRelease[] | null>(null)
   const [releasesError, setReleasesError] = useState(false)
+  const [communityPosts, setCommunityPosts] = useState<NewsArticle[]>([])
 
   useEffect(() => {
     fetchOpenFrontReleases()
       .then(setReleases)
       .catch(() => setReleasesError(true))
+    getCommunityPosts().then(setCommunityPosts)
   }, [])
-
-  const communityPosts = getCommunityPosts()
 
   return (
     <div>

@@ -8,6 +8,7 @@ import MapArt from '../components/MapArt'
 import { useLanguage } from '../i18n/LanguageContext'
 import { getCommunityPosts } from '../lib/newsStore'
 import { fetchOpenFrontReleases, type OpenFrontRelease } from '../lib/openfrontReleases'
+import type { NewsArticle } from '../data/news'
 
 const liveTournament = tournaments.find((t) => t.status === 'live')
 const featuredMaps = maps.slice(0, 4)
@@ -20,14 +21,14 @@ export default function Home() {
   const { t } = useLanguage()
   const top = topClans()
   const [latestPatch, setLatestPatch] = useState<OpenFrontRelease | null>(null)
+  const [latestNews, setLatestNews] = useState<NewsArticle[]>([])
 
   useEffect(() => {
     fetchOpenFrontReleases(1)
       .then((releases) => setLatestPatch(releases[0] ?? null))
       .catch(() => setLatestPatch(null))
+    getCommunityPosts().then((posts) => setLatestNews(posts.slice(0, 2)))
   }, [])
-
-  const latestNews = getCommunityPosts().slice(0, 2)
 
   return (
     <div className="space-y-16">
