@@ -3,7 +3,7 @@ import { SectionHeading, Card } from '../components/ui'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const scaleColor: Record<string, string> = {
-  Compact: 'bg-signal-green/15 text-signal-green',
+  Small: 'bg-signal-green/15 text-signal-green',
   Balanced: 'bg-signal-gold/15 text-signal-gold',
   Sprawling: 'bg-signal-red/15 text-signal-red',
 }

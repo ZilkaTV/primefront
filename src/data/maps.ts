@@ -2,7 +2,7 @@ export interface GameMap {
   id: string
   name: string
   terrain: string
-  scale: 'Compact' | 'Balanced' | 'Sprawling'
+  scale: 'Small' | 'Balanced' | 'Sprawling'
   description: string
   accent: string
 }
@@ -28,7 +28,7 @@ export const maps: GameMap[] = [
     id: 'iceland',
     name: 'Iceland',
     terrain: 'Mountainous, fjord-cut coastline',
-    scale: 'Compact',
+    scale: 'Small',
     description: 'Mountainous terrain with a coastline riddled with fjords and inlets — suited for both land attacks and trade routes.',
     accent: '#5fb3a3',
   },
@@ -52,7 +52,7 @@ export const maps: GameMap[] = [
     id: 'montreal',
     name: 'Montreal',
     terrain: 'River island city, bridge chokepoints',
-    scale: 'Compact',
+    scale: 'Small',
     description: 'A dense island city cut by the river and a handful of bridges. Whoever holds the crossings controls the whole match.',
     accent: '#3b9dff',
   },
@@ -76,7 +76,7 @@ export const maps: GameMap[] = [
     id: 'straitofgibraltar',
     name: 'Strait of Gibraltar',
     terrain: 'Narrow sea strait, two landmasses',
-    scale: 'Compact',
+    scale: 'Small',
     description: 'Two coastlines separated by a razor-thin strait. Naval control of the crossing is worth more than any land push.',
     accent: '#2f6690',
   },
