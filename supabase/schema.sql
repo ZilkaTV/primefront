@@ -46,3 +46,32 @@ create policy "admins can delete news_posts"
   on public.news_posts for delete
   to authenticated
   using (exists (select 1 from public.admins where admins.user_id = auth.uid()));
+
+-- Player profiles created via the /register flow. Each player owns exactly one row.
+create table if not exists public.players (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  discord_username text not null,
+  in_game_name text not null,
+  region text not null,
+  openfront_id text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.players enable row level security;
+
+create policy "public can read players"
+  on public.players for select
+  to public
+  using (true);
+
+create policy "users can insert own player row"
+  on public.players for insert
+  to authenticated
+  with check (user_id = auth.uid());
+
+create policy "users can update own player row"
+  on public.players for update
+  to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());

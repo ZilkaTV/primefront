@@ -2,9 +2,11 @@ import { NavLink } from 'react-router-dom'
 import Logo from './Logo'
 import LanguageSwitcher from './LanguageSwitcher'
 import { useLanguage } from '../i18n/LanguageContext'
+import { useSession, discordDisplayName } from '../lib/useSession'
 
 export default function Navbar() {
   const { t } = useLanguage()
+  const session = useSession()
 
   const links = [
     { to: '/', label: t.nav.home, end: true },
@@ -14,6 +16,8 @@ export default function Navbar() {
     { to: '/maps', label: t.nav.maps },
     { to: '/news', label: t.nav.news },
   ]
+
+  const accountLabel = session ? discordDisplayName(session) : t.nav.register
 
   return (
     <header className="sticky top-0 z-50 border-b border-base-700 bg-base-950/90 backdrop-blur-md">
@@ -43,8 +47,8 @@ export default function Navbar() {
             {t.nav.clanFinder}
           </NavLink>
           <LanguageSwitcher />
-          <NavLink to="/register" className="btn-ghost !py-2 !px-3.5 text-sm hidden sm:inline-flex">
-            {t.nav.register}
+          <NavLink to={session ? '/profile' : '/register'} className="btn-ghost !py-2 !px-3.5 text-sm hidden sm:inline-flex max-w-[10rem] truncate">
+            {accountLabel}
           </NavLink>
           <a
             href="https://discord.gg/6RcPDA9dPb"
@@ -74,8 +78,8 @@ export default function Navbar() {
         <NavLink to="/clan-finder" className={({ isActive }) => `nav-link whitespace-nowrap ${isActive ? 'nav-link-active' : ''}`}>
           {t.nav.clanFinder}
         </NavLink>
-        <NavLink to="/register" className={({ isActive }) => `nav-link whitespace-nowrap ${isActive ? 'nav-link-active' : ''}`}>
-          {t.nav.register}
+        <NavLink to={session ? '/profile' : '/register'} className={({ isActive }) => `nav-link whitespace-nowrap ${isActive ? 'nav-link-active' : ''}`}>
+          {accountLabel}
         </NavLink>
       </nav>
     </header>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { useSession } from '../lib/useSession'
 import { SectionHeading, Card, CategoryBadge } from '../components/ui'
 import { useLanguage } from '../i18n/LanguageContext'
 import { createNewsPost, deleteNewsPost, fetchNewsPosts } from '../lib/newsPosts'
@@ -16,7 +16,7 @@ interface Whitelist {
 
 export default function Admin() {
   const { t } = useLanguage()
-  const [session, setSession] = useState<Session | null | undefined>(undefined)
+  const session = useSession()
   const [whitelist, setWhitelist] = useState<Whitelist | null | undefined>(undefined)
   const [posts, setPosts] = useState<NewsArticle[]>([])
   const [published, setPublished] = useState(false)
@@ -25,12 +25,6 @@ export default function Admin() {
   const [excerpt, setExcerpt] = useState('')
   const [category, setCategory] = useState<NewsPostRow['category']>('Community')
   const [body, setBody] = useState('')
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => setSession(s))
-    return () => listener.subscription.unsubscribe()
-  }, [])
 
   useEffect(() => {
     if (!session) {
