@@ -406,7 +406,7 @@ export const translations = {
       eyebrow: 'Community',
       title: 'Clan-Finder',
       intro: 'Finde einen Clan oder Mitspieler:innen für deinen 5er-Kader — oder biete offene Plätze in deinem eigenen Clan an.',
-      createListing: '+ Gesuch erstellen',
+      createListing: '+ Anzeige erstellen',
       createListingTitle: 'Demo — noch nicht funktional',
       all: 'Alle',
       clanSeekingPlayers: 'Clan sucht Spieler',
