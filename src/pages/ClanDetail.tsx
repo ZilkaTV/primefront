@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   fetchClanById,
   fetchClanMembers,
@@ -16,10 +16,12 @@ import {
   kickMember,
   leaveClan,
   updateClanInfo,
+  deleteClan,
   type Clan,
   type ClanMember,
   type JoinRequest,
 } from '../lib/clans'
+import { uploadClanIcon } from '../lib/uploadClanIcon'
 import { useSession } from '../lib/useSession'
 import { tagColor } from '../lib/tagColor'
 import { RegionBadge, StatCard, Card } from '../components/ui'
@@ -32,6 +34,7 @@ export default function ClanDetail() {
   const { t } = useLanguage()
   const { id } = useParams()
   const session = useSession()
+  const navigate = useNavigate()
 
   const [clan, setClan] = useState<Clan | null | undefined>(undefined)
   const [members, setMembers] = useState<ClanMember[]>([])
@@ -42,6 +45,7 @@ export default function ClanDetail() {
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([])
   const [descDraft, setDescDraft] = useState('')
   const [iconDraft, setIconDraft] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [saved, setSaved] = useState(false)
 
   async function reload() {
@@ -151,6 +155,23 @@ export default function ClanDetail() {
     await reload()
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  async function handleIconChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !session) return
+    setUploading(true)
+    try {
+      setIconDraft(await uploadClanIcon(file, session.user.id))
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function handleDeleteClan() {
+    if (!window.confirm(t.clanDetail.deleteClanConfirm)) return
+    await deleteClan(clan!.id)
+    navigate('/clans')
   }
 
   const isFull = members.length >= 10
@@ -315,18 +336,30 @@ export default function ClanDetail() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1.5">{t.clanDetail.iconUrlLabel}</label>
-                  <input
-                    type="text"
-                    value={iconDraft}
-                    onChange={(e) => setIconDraft(e.target.value)}
-                    className="w-full rounded-lg bg-base-800 border border-base-600 px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-accent"
-                  />
+                  <div className="flex items-center gap-3">
+                    {iconDraft && <img src={iconDraft} alt="" className="h-12 w-12 rounded-lg object-cover shrink-0" />}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleIconChange}
+                      className="flex-1 text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-base-700 file:px-3.5 file:py-2 file:text-sm file:text-white file:cursor-pointer hover:file:bg-base-600"
+                    />
+                  </div>
+                  {uploading && <p className="text-xs text-slate-500 mt-1.5">{t.clanDetail.uploading}</p>}
                 </div>
-                <button type="submit" className="btn-accent">{t.clanDetail.saveButton}</button>
+                <button type="submit" disabled={uploading} className="btn-accent disabled:opacity-50">{t.clanDetail.saveButton}</button>
                 {saved && <span className="ml-3 text-sm text-signal-green">{t.clanDetail.savedNotice}</span>}
               </form>
             </Card>
           </div>
+
+          {myMembership?.clan_role === 'leader' && (
+            <div>
+              <button onClick={handleDeleteClan} className="btn-ghost !text-signal-red !border-signal-red/40 hover:!bg-signal-red/10">
+                {t.clanDetail.deleteClanButton}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

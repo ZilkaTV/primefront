@@ -366,3 +366,52 @@ grant execute on function public.transfer_leadership(uuid) to authenticated;
 grant execute on function public.kick_member(uuid) to authenticated;
 grant execute on function public.leave_clan() to authenticated;
 grant execute on function public.update_clan_info(uuid, text, text) to authenticated;
+
+-- Leader can delete their clan. Members are freed (clan_id/clan_role
+-- cleared) and any sub-clans become top-level clans automatically
+-- (parent_clan_id has on delete set null).
+create or replace function public.delete_clan(p_clan_id uuid) returns void
+language plpgsql security definer set search_path = public as $$
+declare
+  v_caller_role text;
+begin
+  select clan_role into v_caller_role from public.players where user_id = auth.uid() and clan_id = p_clan_id;
+  if v_caller_role is distinct from 'leader' then
+    raise exception 'Only the leader can delete the clan';
+  end if;
+
+  update public.players set clan_id = null, clan_role = null where clan_id = p_clan_id;
+  delete from public.clans where id = p_clan_id;
+end;
+$$;
+
+grant execute on function public.delete_clan(uuid) to authenticated;
+
+-- ============================================================
+-- Storage bucket for clan icons, uploaded directly by leaders/
+-- co-leaders instead of pasting an image URL.
+-- ============================================================
+
+insert into storage.buckets (id, name, public)
+values ('clan-icons', 'clan-icons', true)
+on conflict (id) do nothing;
+
+create policy "public can view clan icons"
+  on storage.objects for select
+  to public
+  using (bucket_id = 'clan-icons');
+
+create policy "authenticated can upload clan icons"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'clan-icons');
+
+create policy "owners can update their clan icon uploads"
+  on storage.objects for update
+  to authenticated
+  using (bucket_id = 'clan-icons' and owner = auth.uid());
+
+create policy "owners can delete their clan icon uploads"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'clan-icons' and owner = auth.uid());

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useSession } from '../lib/useSession'
 import { fetchMyProfile } from '../lib/players'
 import { fetchClans, fetchMyClanId, createClan, type Clan } from '../lib/clans'
+import { uploadClanIcon } from '../lib/uploadClanIcon'
 import { SectionHeading, Card } from '../components/ui'
 import { useLanguage } from '../i18n/LanguageContext'
 
@@ -21,9 +22,23 @@ export default function ClanCreate() {
   const [tag, setTag] = useState('')
   const [description, setDescription] = useState('')
   const [iconUrl, setIconUrl] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [region, setRegion] = useState(regions[0])
   const [parentClanId, setParentClanId] = useState('')
   const [error, setError] = useState('')
+
+  async function handleIconChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !session) return
+    setUploading(true)
+    try {
+      setIconUrl(await uploadClanIcon(file, session.user.id))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setUploading(false)
+    }
+  }
 
   useEffect(() => {
     if (!session) return
@@ -116,7 +131,16 @@ export default function ClanCreate() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">{t.clanDetail.iconUrlLabel}</label>
-            <input type="text" value={iconUrl} onChange={(e) => setIconUrl(e.target.value)} className="w-full rounded-lg bg-base-800 border border-base-600 px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-accent" />
+            <div className="flex items-center gap-3">
+              {iconUrl && <img src={iconUrl} alt="" className="h-12 w-12 rounded-lg object-cover shrink-0" />}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleIconChange}
+                className="flex-1 text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-base-700 file:px-3.5 file:py-2 file:text-sm file:text-white file:cursor-pointer hover:file:bg-base-600"
+              />
+            </div>
+            {uploading && <p className="text-xs text-slate-500 mt-1.5">{t.clanDetail.uploading}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">{t.clanCreate.parentClanLabel}</label>
@@ -128,7 +152,7 @@ export default function ClanCreate() {
             </select>
           </div>
           {error && <p className="text-sm text-signal-red">{error}</p>}
-          <button type="submit" className="btn-accent w-full">{t.clanCreate.submitButton}</button>
+          <button type="submit" disabled={uploading} className="btn-accent w-full disabled:opacity-50">{t.clanCreate.submitButton}</button>
         </form>
       </Card>
     </div>

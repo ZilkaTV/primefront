@@ -157,3 +157,8 @@ export async function updateClanInfo(clanId: string, description: string, iconUr
   })
   if (error) throw error
 }
+
+export async function deleteClan(clanId: string) {
+  const { error } = await supabase.rpc('delete_clan', { p_clan_id: clanId })
+  if (error) throw error
+}
