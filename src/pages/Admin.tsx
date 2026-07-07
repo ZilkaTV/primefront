@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/useSession'
 import { SectionHeading, Card, CategoryBadge } from '../components/ui'
@@ -6,6 +7,7 @@ import { useLanguage } from '../i18n/LanguageContext'
 import { createNewsPost, deleteNewsPost, fetchNewsPosts } from '../lib/newsPosts'
 import type { NewsPostRow } from '../lib/newsPosts'
 import type { NewsArticle } from '../data/news'
+import { fetchLeagueRequests, approveLeagueRequest, rejectLeagueRequest, type Clan } from '../lib/clans'
 
 const categories: NewsPostRow['category'][] = ['Community', 'Update', 'Tournament', 'Patch']
 
@@ -20,6 +22,7 @@ export default function Admin() {
   const [whitelist, setWhitelist] = useState<Whitelist | null | undefined>(undefined)
   const [posts, setPosts] = useState<NewsArticle[]>([])
   const [published, setPublished] = useState(false)
+  const [leagueRequests, setLeagueRequests] = useState<Clan[]>([])
 
   const [title, setTitle] = useState('')
   const [excerpt, setExcerpt] = useState('')
@@ -42,8 +45,19 @@ export default function Admin() {
   useEffect(() => {
     if (whitelist) {
       fetchNewsPosts().then(setPosts)
+      fetchLeagueRequests().then(setLeagueRequests)
     }
   }, [whitelist])
+
+  async function handleApproveLeague(clanId: string) {
+    await approveLeagueRequest(clanId)
+    setLeagueRequests(await fetchLeagueRequests())
+  }
+
+  async function handleRejectLeague(clanId: string) {
+    await rejectLeagueRequest(clanId)
+    setLeagueRequests(await fetchLeagueRequests())
+  }
 
   async function handlePublish(e: React.FormEvent) {
     e.preventDefault()
@@ -134,6 +148,23 @@ export default function Admin() {
         {t.admin.loggedInAs} <span className="text-slate-300 font-medium">{whitelist.display_name}</span> ·{' '}
         {whitelist.role === 'admin' ? t.admin.roleAdmin : t.admin.roleModerator}
       </p>
+
+      <h2 className="text-lg font-bold text-white mb-4">{t.admin.leagueRequestsTitle}</h2>
+      {leagueRequests.length === 0 ? (
+        <p className="text-slate-500 text-sm mb-8">{t.admin.noLeagueRequests}</p>
+      ) : (
+        <div className="space-y-3 mb-8">
+          {leagueRequests.map((c) => (
+            <Card key={c.id} className="flex items-center justify-between gap-4">
+              <Link to={`/clans/${c.id}`} className="font-semibold text-white hover:text-accent">{c.name}</Link>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => handleApproveLeague(c.id)} className="btn-accent !py-1.5 !px-3 text-sm">{t.admin.approveLeague}</button>
+                <button onClick={() => handleRejectLeague(c.id)} className="btn-ghost !py-1.5 !px-3 text-sm">{t.admin.rejectLeague}</button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Card className="mb-8">
         <h2 className="text-lg font-bold text-white mb-4">{t.admin.composerTitle}</h2>

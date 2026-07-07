@@ -13,6 +13,7 @@ export interface Clan {
   recruiting: boolean
   league_wins: number
   league_losses: number
+  league_status: 'none' | 'requested' | 'member'
   created_at: string
 }
 
@@ -160,5 +161,26 @@ export async function updateClanInfo(clanId: string, description: string, iconUr
 
 export async function deleteClan(clanId: string) {
   const { error } = await supabase.rpc('delete_clan', { p_clan_id: clanId })
+  if (error) throw error
+}
+
+export async function requestLeagueMembership(clanId: string) {
+  const { error } = await supabase.rpc('request_league_membership', { p_clan_id: clanId })
+  if (error) throw error
+}
+
+export async function fetchLeagueRequests(): Promise<Clan[]> {
+  const { data, error } = await supabase.from('clans').select('*').eq('league_status', 'requested')
+  if (error) throw error
+  return data as Clan[]
+}
+
+export async function approveLeagueRequest(clanId: string) {
+  const { error } = await supabase.rpc('approve_league_request', { p_clan_id: clanId })
+  if (error) throw error
+}
+
+export async function rejectLeagueRequest(clanId: string) {
+  const { error } = await supabase.rpc('reject_league_request', { p_clan_id: clanId })
   if (error) throw error
 }

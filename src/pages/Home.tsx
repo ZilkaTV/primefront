@@ -35,7 +35,8 @@ export default function Home() {
       .then(({ count }) => setPlayerCount(count ?? 0))
   }, [])
 
-  const top = [...clans].sort((a, b) => b.league_wins - a.league_wins).slice(0, 5)
+  const leagueClans = clans.filter((c) => c.league_status === 'member')
+  const top = [...leagueClans].sort((a, b) => b.league_wins - a.league_wins).slice(0, 5)
 
   return (
     <div className="space-y-16">
@@ -83,7 +84,7 @@ export default function Home() {
         <Card className="!p-0 overflow-hidden max-w-2xl">
           <div className="px-5 py-4 border-b border-base-700 flex items-center justify-between">
             <h3 className="font-semibold text-white">{t.league.title}</h3>
-            <span className="text-xs text-slate-500">{clans.length} {t.home.clansEnrolled}</span>
+            <span className="text-xs text-slate-500">{top.length} {t.home.clansEnrolled}</span>
           </div>
           {top.length === 0 ? (
             <div className="p-5">

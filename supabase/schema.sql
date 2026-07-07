@@ -415,3 +415,69 @@ create policy "owners can delete their clan icon uploads"
   on storage.objects for delete
   to authenticated
   using (bucket_id = 'clan-icons' and owner = auth.uid());
+
+-- ============================================================
+-- League membership. Clans no longer join the league automatically
+-- on creation — leaders/co-leaders request membership and a staff
+-- member (from the admins whitelist) approves or rejects it. A
+-- sub-clan cannot request membership while its parent clan is
+-- already a league member (see Rules page for the promotion note).
+-- ============================================================
+
+alter table public.clans add column if not exists league_status text not null default 'none'
+  check (league_status in ('none', 'requested', 'member'));
+
+create or replace function public.request_league_membership(p_clan_id uuid) returns void
+language plpgsql security definer set search_path = public as $$
+declare
+  v_caller_role text;
+  v_current_status text;
+  v_parent_id uuid;
+  v_parent_status text;
+begin
+  select clan_role into v_caller_role from public.players where user_id = auth.uid() and clan_id = p_clan_id;
+  if v_caller_role is null or v_caller_role not in ('leader', 'co_leader') then
+    raise exception 'Not authorized';
+  end if;
+
+  select league_status, parent_clan_id into v_current_status, v_parent_id from public.clans where id = p_clan_id;
+  if v_current_status is distinct from 'none' then
+    raise exception 'A league request already exists for this clan';
+  end if;
+
+  if v_parent_id is not null then
+    select league_status into v_parent_status from public.clans where id = v_parent_id;
+    if v_parent_status = 'member' then
+      raise exception 'A sub-clan cannot join the league while its parent clan is a league member';
+    end if;
+  end if;
+
+  update public.clans set league_status = 'requested' where id = p_clan_id;
+end;
+$$;
+
+create or replace function public.approve_league_request(p_clan_id uuid) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from public.admins where admins.user_id = auth.uid()) then
+    raise exception 'Not authorized';
+  end if;
+
+  update public.clans set league_status = 'member' where id = p_clan_id and league_status = 'requested';
+end;
+$$;
+
+create or replace function public.reject_league_request(p_clan_id uuid) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from public.admins where admins.user_id = auth.uid()) then
+    raise exception 'Not authorized';
+  end if;
+
+  update public.clans set league_status = 'none' where id = p_clan_id and league_status = 'requested';
+end;
+$$;
+
+grant execute on function public.request_league_membership(uuid) to authenticated;
+grant execute on function public.approve_league_request(uuid) to authenticated;
+grant execute on function public.reject_league_request(uuid) to authenticated;

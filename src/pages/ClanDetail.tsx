@@ -17,6 +17,7 @@ import {
   leaveClan,
   updateClanInfo,
   deleteClan,
+  requestLeagueMembership,
   type Clan,
   type ClanMember,
   type JoinRequest,
@@ -47,6 +48,7 @@ export default function ClanDetail() {
   const [iconDraft, setIconDraft] = useState('')
   const [uploading, setUploading] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [leagueError, setLeagueError] = useState('')
 
   async function reload() {
     if (!id) return
@@ -174,6 +176,16 @@ export default function ClanDetail() {
     navigate('/clans')
   }
 
+  async function handleRequestLeague() {
+    setLeagueError('')
+    try {
+      await requestLeagueMembership(clan!.id)
+      await reload()
+    } catch (err) {
+      setLeagueError(err instanceof Error ? err.message : String(err))
+    }
+  }
+
   const isFull = members.length >= 10
   const canRequestJoin = session && myClanId === null && !myRequest && clan.recruiting && !isFull
 
@@ -204,6 +216,8 @@ export default function ClanDetail() {
             <h1 className="text-2xl sm:text-3xl font-bold text-white">{clan.name}</h1>
             <RegionBadge region={clan.region} />
             {clan.recruiting && <span className="badge bg-signal-green/15 text-signal-green">{t.clanDetail.activelyRecruiting}</span>}
+            {clan.league_status === 'member' && <span className="badge bg-signal-blue/15 text-signal-blue">{t.clanDetail.leagueStatusMember}</span>}
+            {clan.league_status === 'requested' && <span className="badge bg-signal-gold/15 text-signal-gold">{t.clanDetail.leagueStatusRequested}</span>}
           </div>
           <p className="text-slate-400 mt-2 max-w-2xl">{clan.description}</p>
         </div>
@@ -302,6 +316,21 @@ export default function ClanDetail() {
 
       {isLeaderOrCoLeader && (
         <div className="space-y-8">
+          <div>
+            <h2 className="text-xl font-bold text-white mb-4">{t.clanDetail.leagueSectionTitle}</h2>
+            <Card>
+              {clan.league_status === 'member' && <p className="text-sm text-slate-300">{t.clanDetail.leagueStatusMember}</p>}
+              {clan.league_status === 'requested' && <p className="text-sm text-slate-300">{t.clanDetail.leagueStatusRequested}</p>}
+              {clan.league_status === 'none' && (
+                <div>
+                  <p className="text-sm text-slate-400 mb-4">{t.clanDetail.leagueStatusNone}</p>
+                  <button onClick={handleRequestLeague} className="btn-accent">{t.clanDetail.requestLeagueButton}</button>
+                </div>
+              )}
+              {leagueError && <p className="text-sm text-signal-red mt-3">{leagueError}</p>}
+            </Card>
+          </div>
+
           <div>
             <h2 className="text-xl font-bold text-white mb-4">{t.clanDetail.pendingRequestsTitle}</h2>
             {joinRequests.length === 0 ? (

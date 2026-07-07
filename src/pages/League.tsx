@@ -10,7 +10,7 @@ export default function League() {
   const [clans, setClans] = useState<Clan[]>([])
 
   useEffect(() => {
-    fetchClans().then(setClans)
+    fetchClans().then((all) => setClans(all.filter((c) => c.league_status === 'member')))
   }, [])
 
   const rows = [...clans].sort((a, b) => b.league_wins * 3 - a.league_wins * 3)
