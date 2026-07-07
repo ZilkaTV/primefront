@@ -17,6 +17,7 @@ export const translations = {
       news: 'News',
       socials: 'Socials',
       support: 'Support',
+      jobs: 'Jobs',
       clanFinder: 'Clan Finder',
       register: 'Register',
       discordTitle: 'Discord (demo link)',
@@ -307,6 +308,12 @@ export const translations = {
       donateButton: 'Donate via PayPal',
       disclaimer: 'Donations are voluntary and go to the Primefront organizer directly — this is not a company and there are no guaranteed rewards.',
     },
+    jobs: {
+      eyebrow: 'Get involved',
+      title: 'Jobs & volunteering',
+      intro: "Primefront is fan-run and always looking for people who want to help build it. All roles are volunteer positions for now. Interested? Apply by email.",
+      applyButton: 'Apply',
+    },
     notFound: {
       title: 'Page not found',
       body: "This territory hasn't been conquered yet.",
@@ -351,6 +358,7 @@ export const translations = {
       news: 'News',
       socials: 'Socials',
       support: 'Support',
+      jobs: 'Jobs',
       clanFinder: 'Clan-Finder',
       register: 'Registrieren',
       discordTitle: 'Discord (Demo-Link)',
@@ -641,6 +649,12 @@ export const translations = {
       donateButton: 'Über PayPal spenden',
       disclaimer: 'Spenden sind freiwillig und gehen direkt an den Primefront-Betreiber — dies ist kein Unternehmen, es gibt keine garantierten Gegenleistungen.',
     },
+    jobs: {
+      eyebrow: 'Mitmachen',
+      title: 'Jobs & Mitarbeit',
+      intro: 'Primefront wird von Fans betrieben und sucht immer Leute, die mitbauen wollen. Alle Rollen sind aktuell ehrenamtlich. Interesse? Bewirb dich per E-Mail.',
+      applyButton: 'Bewerben',
+    },
     notFound: {
       title: 'Seite nicht gefunden',
       body: 'Dieses Territorium wurde noch nicht erobert.',
@@ -685,6 +699,7 @@ export const translations = {
       news: 'Actualités',
       socials: 'Réseaux',
       support: 'Soutenir',
+      jobs: 'Emplois',
       clanFinder: 'Recherche de clan',
       register: "S'inscrire",
       discordTitle: 'Discord (lien de démo)',
@@ -974,6 +989,12 @@ export const translations = {
       reasonPrize: 'Les cagnottes de prix des tournois pour la communauté',
       donateButton: 'Faire un don via PayPal',
       disclaimer: "Les dons sont volontaires et vont directement à l'organisateur de Primefront — ce n'est pas une entreprise et il n'y a aucune récompense garantie.",
+    },
+    jobs: {
+      eyebrow: "S'impliquer",
+      title: 'Emplois & bénévolat',
+      intro: "Primefront est géré par des fans et recherche toujours des personnes motivées pour aider à le construire. Tous les postes sont bénévoles pour le moment. Intéressé(e) ? Postulez par e-mail.",
+      applyButton: 'Postuler',
     },
     notFound: {
       title: 'Page introuvable',

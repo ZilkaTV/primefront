@@ -14,6 +14,7 @@ import Rules from './pages/Rules'
 import About from './pages/About'
 import Socials from './pages/Socials'
 import Support from './pages/Support'
+import Jobs from './pages/Jobs'
 import Admin from './pages/Admin'
 import PlayerRegister from './pages/PlayerRegister'
 import Profile from './pages/Profile'
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/socials" element={<Socials />} />
         <Route path="/support" element={<Support />} />
+        <Route path="/jobs" element={<Jobs />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/register" element={<PlayerRegister />} />
         <Route path="/profile" element={<Profile />} />

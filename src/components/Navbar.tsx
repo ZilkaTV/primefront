@@ -17,6 +17,7 @@ export default function Navbar() {
     { to: '/news', label: t.nav.news },
     { to: '/socials', label: t.nav.socials },
     { to: '/support', label: t.nav.support },
+    { to: '/jobs', label: t.nav.jobs },
   ]
 
   const accountLabel = session ? discordDisplayName(session) : t.nav.register
