@@ -15,6 +15,8 @@ export default function Navbar() {
     { to: '/tournaments', label: t.nav.tournaments },
     { to: '/maps', label: t.nav.maps },
     { to: '/news', label: t.nav.news },
+    { to: '/socials', label: t.nav.socials },
+    { to: '/support', label: t.nav.support },
   ]
 
   const accountLabel = session ? discordDisplayName(session) : t.nav.register
@@ -51,7 +53,7 @@ export default function Navbar() {
             {accountLabel}
           </NavLink>
           <a
-            href="https://discord.gg/6RcPDA9dPb"
+            href="https://discord.gg/SP2V5VsNHn"
             target="_blank"
             rel="noreferrer"
             aria-label="Discord"

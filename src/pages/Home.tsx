@@ -7,6 +7,7 @@ import { tournaments } from '../data/tournaments'
 import { maps } from '../data/maps'
 import { SectionHeading, StatCard, RegionBadge, StatusBadge, CategoryBadge, Card } from '../components/ui'
 import MapArt from '../components/MapArt'
+import TwitchEmbed from '../components/TwitchEmbed'
 import { useLanguage } from '../i18n/LanguageContext'
 import { getCommunityPosts } from '../lib/newsStore'
 import { fetchOpenFrontReleases, type OpenFrontRelease } from '../lib/openfrontReleases'
@@ -110,6 +111,18 @@ export default function Home() {
               ))}
             </ul>
           )}
+        </Card>
+      </section>
+
+      {/* Twitch / socials */}
+      <section>
+        <SectionHeading
+          eyebrow={t.socials.eyebrow}
+          title={t.socials.twitchLabel}
+          action={<Link to="/socials" className="text-sm font-semibold text-accent hover:text-accent-light">{t.socials.title} →</Link>}
+        />
+        <Card className="max-w-2xl">
+          <TwitchEmbed />
         </Card>
       </section>
 

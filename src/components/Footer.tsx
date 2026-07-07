@@ -36,7 +36,7 @@ export default function Footer() {
         <div>
           <h3 className="text-sm font-semibold text-white mb-3">{t.footer.community}</h3>
           <ul className="space-y-2 text-sm text-slate-400">
-            <li><a href="https://discord.gg/6RcPDA9dPb" target="_blank" rel="noreferrer" className="hover:text-accent">{t.footer.discord}</a></li>
+            <li><a href="https://discord.gg/SP2V5VsNHn" target="_blank" rel="noreferrer" className="hover:text-accent">{t.footer.discord}</a></li>
             <li><a href="https://github.com/openfrontio/OpenFrontIO" target="_blank" rel="noreferrer" className="hover:text-accent">{t.footer.github}</a></li>
             <li><a href="https://openfront.io/privacy-policy.html" target="_blank" rel="noreferrer" className="hover:text-accent">{t.footer.privacyPolicy}</a></li>
           </ul>

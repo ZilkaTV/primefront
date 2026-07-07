@@ -12,6 +12,8 @@ import News from './pages/News'
 import NewsDetail from './pages/NewsDetail'
 import Rules from './pages/Rules'
 import About from './pages/About'
+import Socials from './pages/Socials'
+import Support from './pages/Support'
 import Admin from './pages/Admin'
 import PlayerRegister from './pages/PlayerRegister'
 import Profile from './pages/Profile'
@@ -33,6 +35,8 @@ export default function App() {
         <Route path="/news/:slug" element={<NewsDetail />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/about" element={<About />} />
+        <Route path="/socials" element={<Socials />} />
+        <Route path="/support" element={<Support />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/register" element={<PlayerRegister />} />
         <Route path="/profile" element={<Profile />} />
