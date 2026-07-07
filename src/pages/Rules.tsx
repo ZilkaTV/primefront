@@ -32,6 +32,7 @@ const sections = [
       'A clan needs a full 5-player starting roster (plus substitutes) and at least 5 active members to register for the league.',
       'Applications are reviewed by the league admins; approval depends on roster completeness and confirmed agreement to these rules and the OpenFront Terms of Service.',
       'Clan tags may not contain offensive or misleading terms. A clan may switch its registered roster at most once per season.',
+      "A sub-clan cannot compete in the same league as its parent clan. If a parent clan is a league member, its sub-clans cannot request league membership until the parent leaves the league. When a promotion opens up a spot, the next-best eligible clan in the queue is promoted instead of a sub-clan whose parent is already a member.",
     ],
   },
   {
