@@ -481,3 +481,38 @@ $$;
 grant execute on function public.request_league_membership(uuid) to authenticated;
 grant execute on function public.approve_league_request(uuid) to authenticated;
 grant execute on function public.reject_league_request(uuid) to authenticated;
+
+-- ============================================================
+-- Clan Finder listings. Anyone signed in can post a "clan looking
+-- for players" or "player looking for a clan" listing; only the
+-- author can delete their own post.
+-- ============================================================
+
+create table if not exists public.clan_finder_posts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  type text not null check (type in ('clan-seeking-players', 'player-seeking-clan')),
+  title text not null,
+  region text not null,
+  elo_range text not null,
+  description text not null default '',
+  contact text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.clan_finder_posts enable row level security;
+
+create policy "public can read clan_finder_posts"
+  on public.clan_finder_posts for select
+  to public
+  using (true);
+
+create policy "authenticated can insert own clan_finder_posts"
+  on public.clan_finder_posts for insert
+  to authenticated
+  with check (user_id = auth.uid());
+
+create policy "owners can delete own clan_finder_posts"
+  on public.clan_finder_posts for delete
+  to authenticated
+  using (user_id = auth.uid());
