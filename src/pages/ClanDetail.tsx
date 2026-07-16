@@ -357,7 +357,7 @@ export default function ClanDetail() {
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1.5">{t.clanDetail.descriptionLabel}</label>
                   <textarea
-                    rows={3}
+                    rows={10}
                     value={descDraft}
                     onChange={(e) => setDescDraft(e.target.value)}
                     className="w-full rounded-lg bg-base-800 border border-base-600 px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-accent resize-y"
